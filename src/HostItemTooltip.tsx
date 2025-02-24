@@ -20,7 +20,6 @@ const HostItemTooltip: React.FC<HostItemTooltipProps> = ({ children, name, dataF
     <Tooltip
       content={
         <div className={styles.tooltip}>
-          <h3>{name}</h3>
           <table>
             <thead>
               <tr>
