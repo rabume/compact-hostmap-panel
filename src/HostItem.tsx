@@ -11,15 +11,16 @@ import { nonNullable } from './utils/typeHelpers';
 type ItemStyle = {
   type: 'xl' | 'lg' | 'md' | 'sm' | 'xs';
   width: number;
+  height: number;
   borderRadius: string;
 };
 
 export const ITEM_STYLES: ItemStyle[] = [
-  { type: 'xl', width: 52, borderRadius: '4px' },
-  { type: 'lg', width: 44, borderRadius: '4px' },
-  { type: 'md', width: 36, borderRadius: '3px' },
-  { type: 'sm', width: 28, borderRadius: '3px' },
-  { type: 'xs', width: 20, borderRadius: '2px' },
+  { type: 'xl', width: 220, height: 150, borderRadius: '4px' },
+  { type: 'lg', width: 44, height: 44, borderRadius: '4px' },
+  { type: 'md', width: 36, height: 36, borderRadius: '3px' },
+  { type: 'sm', width: 28, height: 28, borderRadius: '3px' },
+  { type: 'xs', width: 20, height: 20, borderRadius: '2px' },
 ];
 
 interface HostItemProps {
@@ -86,13 +87,34 @@ const HostItem: React.FC<HostItemProps> = ({ name, dataFrames, itemIndex, itemSt
         >
           <span
             className={cx(
-              'dot',
+              'name',
               css`
                 color: ${maxDisplayValue.color ? theme.colors.getContrastText(maxDisplayValue.color) : undefined};
               `
             )}
           >
-            ...
+            {name}
+            {dataFrames.map(({ refId, fields }) => {
+              const valueField = fields.find(getValueField);
+
+              if (!valueField) {
+                return (
+                  <tr key={refId}>
+                    <td>{refId}</td>
+                    <td>No Data</td>
+                  </tr>
+                );
+              }
+
+              const displayValue = valueField.display!(getMeanValue(valueField));
+
+              return (
+                <tr key={refId}>
+                  <td>{refId}</td>
+                  <td>{formatDisplayValue(displayValue)}</td>
+                </tr>
+              );
+            })}
           </span>
           <span className={styles['sr-only']}>{formatDisplayValue(maxDisplayValue)}</span>
         </div>
@@ -127,7 +149,7 @@ const getStyles = (itemStyle: ItemStyle) => (theme: GrafanaTheme2) => ({
   hostItem: css`
     position: relative;
     width: ${itemStyle.width}px;
-    height: ${itemStyle.width}px;
+    height: ${itemStyle.height}px;
     text-align: center;
     color: ${theme.colors.text.primary};
     .item-inset {
@@ -151,6 +173,26 @@ const getStyles = (itemStyle: ItemStyle) => (theme: GrafanaTheme2) => ({
       transform: translate(-50%, -50%);
       line-height: 1;
       margin-top: -5px;
+    }
+    .name {
+      display: ${itemStyle.type === 'xs' ? 'none' : 'block'};
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      line-height: 1;
+      margin-top: -5px;
+      font-size: ${itemStyle.type === 'xl'
+        ? '12px'
+        : itemStyle.type === 'lg'
+        ? '11px'
+        : itemStyle.type === 'md'
+        ? '10px'
+        : '9px'};
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   `,
   'sr-only': css`
