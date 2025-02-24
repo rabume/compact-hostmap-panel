@@ -9,7 +9,11 @@
     "watch": "grafana-toolkit plugin:dev --watch",
     "sign": "grafana-toolkit plugin:sign",
     "start": "yarn watch",
-    "serve": "GRAFANA_VERSION=10.2.2 docker-compose up --build"
+    "serve": "GRAFANA_VERSION=10.2.2 docker-compose up --build",
+    "fix-lint": "eslint --fix --ext .ts,.tsx src",
+    "lint": "eslint --ext .ts,.tsx src",
+    "prettier": "prettier --write src/**/*.{ts,tsx}",
+    "prettier-check": "prettier --check src/**/*.{ts,tsx}"
   },
   "author": "zestairlove",
   "license": "Apache-2.0",
