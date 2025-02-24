@@ -18,33 +18,11 @@ const HostList: React.FC<HostListProps> = ({ data, width, height }) => {
   const entries = useMemo(() => Object.entries(data), [data]);
 
   const { listWidth, listHeight, itemStyle, isOverflow } = useMemo(() => {
-    const dataLength = entries.length;
-    let _itemStyle = ITEM_STYLES[ITEM_STYLES.length - 1];
-    let _listWidth;
-    let _listHeight;
-    let _isOverflow = true;
+    const _itemStyle = ITEM_STYLES[0];
+    const _listWidth = width;
+    const _listHeight = height;
+    const _isOverflow = true;
 
-    for (const is of ITEM_STYLES) {
-      const maxCol = Math.floor(width / is.width);
-      const maxRow = Math.floor(height / is.width);
-
-      if (maxCol * maxRow >= dataLength) {
-        let colCount = Math.min(maxCol, Math.ceil(dataLength / maxRow));
-        let rowCount = Math.ceil(dataLength / colCount);
-
-        // 정사각형이나 컬럼이 하나 더 큰 직사각형 레이아웃을 만든다.
-        while (colCount <= rowCount && (colCount + 1) * is.width < width) {
-          colCount += 1;
-          rowCount = Math.ceil(dataLength / colCount);
-        }
-
-        _listWidth = colCount * is.width;
-        _listHeight = rowCount * is.width;
-        _itemStyle = is;
-        _isOverflow = false;
-        break;
-      }
-    }
     return { listWidth: _listWidth, listHeight: _listHeight, itemStyle: _itemStyle, isOverflow: _isOverflow };
   }, [width, height, entries.length]);
 
